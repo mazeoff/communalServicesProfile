@@ -3,12 +3,14 @@
 namespace App\Controller;
 
 use App\Repository\ServicesRepository;
+use App\Repository\BalanceRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 class IndexController extends AbstractController
 {
+
     #[Route('/index', name: 'app_index')]
     public function index(): Response
     {
@@ -17,13 +19,23 @@ class IndexController extends AbstractController
         ]);
     }
 
+    public function getBalance(BalanceRepository $balanceRepository): Response
+    {
+        $balance = $balanceRepository->find(1)->getValue();
+        return $this->render('base.html.twig', [
+            'balance' => $balance
+        ]);
+    }
+
     #[Route('/services', name: 'services')]
-    public function services(ServicesRepository $servicesRepository): Response
+    public function services(ServicesRepository $servicesRepository, BalanceRepository $balanceRepository): Response
     {
         $items = $servicesRepository->findAll();
+        $balance = $balanceRepository->find(1)->getValue();
         return $this->render('index/services.html.twig', [
-            'title' => 'SERVICES',
-            'items' => $items
+            'title' => 'Мои услуги',
+            'items' => $items,
+            'balance' => $balance
         ]);
     }
 
@@ -38,11 +50,13 @@ class IndexController extends AbstractController
     }
 
     #[Route('/transactions', name: 'transactions')]
-    public function transactions(): Response
+    public function transactions(BalanceRepository $balanceRepository): Response
     {
+        $balance = $balanceRepository->find(1)->getValue();
         return $this->render('index/transactions.html.twig', [
             'title' => 'Ваши транзакции',
-            'items' => '10'
+            'items' => '10',
+            'balance' => $balance
         ]);
     }
 }

@@ -22,6 +22,9 @@ class Services
     #[ORM\Column]
     private ?float $price = null;
 
+    #[ORM\Column]
+    private ?bool $subscription = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -59,6 +62,18 @@ class Services
     public function setPrice(float $price): self
     {
         $this->price = $price;
+
+        return $this;
+    }
+
+    public function isSubscription(): ?bool
+    {
+        return $this->subscription;
+    }
+
+    public function setSubscription(bool $subscription): self
+    {
+        $this->subscription = $subscription;
 
         return $this;
     }
