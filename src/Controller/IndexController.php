@@ -21,20 +21,22 @@ class IndexController extends AbstractController
 
 
     #[Route('/services', name: 'services')]
-    public function services(ServicesRepository $servicesRepository, BalanceRepository $balanceRepository): Response
+    public function services(ServicesRepository $servicesRepository,
+                             BalanceRepository $balanceRepository): Response
+
     {
+
         $items = $servicesRepository->findAll();
         $balance = $balanceRepository->find(1)->getValue();
-
         //считаем общую стоимость всех услуг за месяц
         $totalCostOfServices = 0;
         for ($i = 0; $i < count($items);$i++){
             if($items[$i]->isSubscription()){//если на услугу есть подписка
-                $totalCostOfServices += $items[$i]->getPrice();//то считаем общую стоимость
+                $totalCostOfServices += $items[$i]->getPrice()*$items[$i]->getQuantity();//то считаем общую стоимость
             }
 
         }
-        $totalCostOfServices *=30;
+        $totalCostOfServices *= 30;
 
 
 

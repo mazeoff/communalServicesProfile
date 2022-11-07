@@ -17,8 +17,6 @@ class Transactions
     #[ORM\JoinColumn(nullable: false)]
     private ?services $service = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $quantity = null;
 
     #[ORM\Column]
     private ?float $sum = null;
@@ -44,17 +42,6 @@ class Transactions
         return $this;
     }
 
-    public function getQuantity(): ?string
-    {
-        return $this->quantity;
-    }
-
-    public function setQuantity(string $quantity): self
-    {
-        $this->quantity = $quantity;
-
-        return $this;
-    }
 
     public function getSum(): ?float
     {

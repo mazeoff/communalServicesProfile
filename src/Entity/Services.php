@@ -25,6 +25,10 @@ class Services
     #[ORM\Column]
     private ?bool $subscription = null;
 
+    #[ORM\Column(nullable: true)]
+    private ?float $quantity = null;
+
+
     public function getId(): ?int
     {
         return $this->id;
@@ -77,4 +81,17 @@ class Services
 
         return $this;
     }
+
+    public function getQuantity(): ?float
+    {
+        return $this->quantity;
+    }
+
+    public function setQuantity(?float $quantity): self
+    {
+        $this->quantity = $quantity;
+
+        return $this;
+    }
+
 }
