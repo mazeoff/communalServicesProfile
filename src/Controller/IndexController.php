@@ -2,9 +2,16 @@
 
 namespace App\Controller;
 
+use App\Entity\Service;
+use App\Entity\Transaction;
+use App\Form\Type\TransactionType;
 use App\Repository\ServicesRepository;
 use App\Repository\BalanceRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -21,7 +28,7 @@ class IndexController extends AbstractController
 
 
     #[Route('/services', name: 'services')]
-    public function services(ServicesRepository $servicesRepository,
+    public function services(Request $request,ServicesRepository $servicesRepository,
                              BalanceRepository $balanceRepository): Response
 
     {
@@ -39,15 +46,30 @@ class IndexController extends AbstractController
         $totalCostOfServices *= 30;
 
 
+        // create object
+        $subscription = new Transaction();
+
+        $form = $this->createForm(TransactionType::class, $subscription);
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            $transaction = $form->getData();
+
+            // ... perform some action, such as saving the task to the database
+
+            return $this->redirectToRoute('task_success');
+        }
 
         return $this->render('index/services.html.twig', [
             'title' => 'Мои услуги',
             'items' => $items,
             'balance' => $balance,
             'totalCost' => $totalCostOfServices,
-
+            'form' => $form->createView()
         ]);
     }
+
 
     #[Route('/services/item/{id<\d+>}', name: 'servicesItem')]
     public function servicesItem(int $id): Response

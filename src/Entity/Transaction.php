@@ -6,7 +6,7 @@ use App\Repository\TransactionsRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: TransactionsRepository::class)]
-class Transactions
+class Transaction
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -15,7 +15,7 @@ class Transactions
 
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false)]
-    private ?services $service = null;
+    private ?Service $service = null;
 
 
     #[ORM\Column]
@@ -30,12 +30,12 @@ class Transactions
         return $this->id;
     }
 
-    public function getService(): ?services
+    public function getService(): ?Service
     {
         return $this->service;
     }
 
-    public function setService(?services $service): self
+    public function setService(?Service $service): self
     {
         $this->service = $service;
 
