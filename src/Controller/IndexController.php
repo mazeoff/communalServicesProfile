@@ -19,23 +19,31 @@ class IndexController extends AbstractController
         ]);
     }
 
-    public function getBalance(BalanceRepository $balanceRepository): Response
-    {
-        $balance = $balanceRepository->find(1)->getValue();
-        return $this->render('base.html.twig', [
-            'balance' => $balance
-        ]);
-    }
 
     #[Route('/services', name: 'services')]
     public function services(ServicesRepository $servicesRepository, BalanceRepository $balanceRepository): Response
     {
         $items = $servicesRepository->findAll();
         $balance = $balanceRepository->find(1)->getValue();
+
+        //считаем общую стоимость всех услуг за месяц
+        $totalCostOfServices = 0;
+        for ($i = 0; $i < count($items);$i++){
+            if($items[$i]->isSubscription()){//если на услугу есть подписка
+                $totalCostOfServices += $items[$i]->getPrice();//то считаем общую стоимость
+            }
+
+        }
+        $totalCostOfServices *=30;
+
+
+
         return $this->render('index/services.html.twig', [
             'title' => 'Мои услуги',
             'items' => $items,
-            'balance' => $balance
+            'balance' => $balance,
+            'totalCost' => $totalCostOfServices,
+
         ]);
     }
 

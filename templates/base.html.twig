@@ -28,12 +28,15 @@
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="collapse navbar-collapse" id="navbarText">
-                    <ul class="navbar-nav mr-auto">
+                    <ul class="navbar-nav" style="margin-right: auto !important;">
     {#                    <li class="nav-item {{ app.request.get('_route') == 'index' ? 'active' }}">#}
     {#                                                    <a class="nav-link" href="{{ path('index') }}">Home</a>#}
     {#                    </li>#}
                         <li class="nav-item {{ app.request.get('_route') == 'services' ? 'active' }}">
                             <a class="nav-link" href="{{ path('services') }}">Услуги</a>
+                        </li>
+                        <li class="nav-item {{ app.request.get('_route') == 'transactions' ? 'active' }}">
+                            <a class="nav-link" href="{{ path('transactions') }}">Операции</a>
                         </li>
                     </ul>
                     <span class="navbar-text">Баланс: {{ balance }} ₽</span>
