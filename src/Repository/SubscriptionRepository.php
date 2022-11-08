@@ -14,7 +14,7 @@ use Doctrine\Persistence\ManagerRegistry;
  * @method Subscriptions[]    findAll()
  * @method Subscriptions[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class SubscriptionsRepository extends ServiceEntityRepository
+class SubscriptionRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {

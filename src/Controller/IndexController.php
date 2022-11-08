@@ -5,12 +5,11 @@ namespace App\Controller;
 use App\Entity\Service;
 use App\Entity\Transaction;
 use App\Form\Type\TransactionType;
-use App\Repository\ServicesRepository;
+use App\Repository\ServiceRepository;
 use App\Repository\BalanceRepository;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -28,8 +27,10 @@ class IndexController extends AbstractController
 
 
     #[Route('/services', name: 'services')]
-    public function services(Request $request,ServicesRepository $servicesRepository,
-                             BalanceRepository $balanceRepository): Response
+    public function services(Request           $request,
+                             ServiceRepository $servicesRepository,
+                             BalanceRepository $balanceRepository,
+                             EntityManagerInterface $em): Response
 
     {
 
@@ -47,18 +48,24 @@ class IndexController extends AbstractController
 
 
         // create object
-        $subscription = new Transaction();
+        $transaction = new Transaction();
 
-        $form = $this->createForm(TransactionType::class, $subscription);
+
+        $form = $this->createForm(TransactionType::class, $transaction);
 
         $form->handleRequest($request);
+
+
+
         if ($form->isSubmitted() && $form->isValid()) {
+            $dataForm = $form->getData();
+            $service = $servicesRepository->find($dataForm->getService()->getId());
+            $service->setSubscription(true);
+            $service->setQuantity($form->get('quantity')->getData());
 
-            $transaction = $form->getData();
+            $em->flush();
 
-            // ... perform some action, such as saving the task to the database
-
-            return $this->redirectToRoute('task_success');
+            return $this->redirectToRoute('services');
         }
 
         return $this->render('index/services.html.twig', [

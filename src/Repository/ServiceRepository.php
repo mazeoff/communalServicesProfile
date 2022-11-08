@@ -14,7 +14,7 @@ use Doctrine\Persistence\ManagerRegistry;
  * @method Service[]    findAll()
  * @method Service[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class ServicesRepository extends ServiceEntityRepository
+class ServiceRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
@@ -37,6 +37,34 @@ class ServicesRepository extends ServiceEntityRepository
         if ($flush) {
             $this->getEntityManager()->flush();
         }
+    }
+
+    public function findAllSubscriptions()
+    {
+        return $this->createQueryBuilder('s')
+            ->andWhere('s.subscription = true')
+            ->getQuery()
+            ->execute()
+            ;
+    }
+
+    public function findAllUnsubscribedServices()
+    {
+        return $this->createQueryBuilder('s')
+            ->andWhere('s.subscription = false')
+            ->getQuery()
+            ->execute()
+            ;
+    }
+
+    public function getUnitByServiceId($id)
+    {
+        return $this->createQueryBuilder('s')
+            ->andWhere('s.id = :id' )
+            ->setParameter('id', $id)
+            ->getQuery()
+            ->execute()
+            ;
     }
 
 //    /**
