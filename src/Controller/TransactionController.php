@@ -4,7 +4,7 @@ namespace App\Controller;
 
 use App\Controller\IndexController;
 use App\Entity\Transaction;
-use App\Form\Type\TransactionType;
+use App\Form\Type\SubscriptionType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -21,7 +21,7 @@ class TransactionController extends AbstractController
 //        // create object
 //        $transaction = new Transaction();
 //
-//        $form = $this->createForm(TransactionType::class, $transaction);
+//        $form = $this->createForm(SubscriptionType::class, $transaction);
 //
 //        $form->handleRequest($request);
 //        if ($form->isSubmitted() && $form->isValid()) {

@@ -4,7 +4,8 @@ namespace App\Controller;
 
 use App\Entity\Service;
 use App\Entity\Transaction;
-use App\Form\Type\TransactionType;
+use App\Form\Type\SubscriptionType;
+use App\Form\Type\UnSubscriptionType;
 use App\Repository\ServiceRepository;
 use App\Repository\BalanceRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -48,20 +49,34 @@ class IndexController extends AbstractController
 
 
         // create object
-        $transaction = new Transaction();
+        $subscriptionTransaction = new Transaction();
+        $unsubscriptionTransaction = new Transaction();
 
 
-        $form = $this->createForm(TransactionType::class, $transaction);
+        $subscriptionForm = $this->createForm(SubscriptionType::class, $subscriptionTransaction);
+        $unsubscriptionForm = $this->createForm(UnSubscriptionType::class, $unsubscriptionTransaction);
 
-        $form->handleRequest($request);
+        $subscriptionForm->handleRequest($request);
+        $unsubscriptionForm->handleRequest($request);
 
 
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $dataForm = $form->getData();
-            $service = $servicesRepository->find($dataForm->getService()->getId());
+        if ($subscriptionForm->isSubmitted() && $subscriptionForm->isValid()) {
+            $subscriptionDataForm = $subscriptionForm->getData();
+            $service = $servicesRepository->find($subscriptionDataForm->getService()->getId());
             $service->setSubscription(true);
-            $service->setQuantity($form->get('quantity')->getData());
+            $service->setQuantity($subscriptionForm->get('quantity')->getData());
+
+            $em->flush();
+
+            return $this->redirectToRoute('services');
+        }
+
+        if ($unsubscriptionForm->isSubmitted() && $unsubscriptionForm->isValid()) {
+            $serviceId = $unsubscriptionForm->get('serviceId')->getData();
+            $service =  $servicesRepository->find($serviceId);
+            $service->setSubscription(false);
+            $service->setQuantity(null);
 
             $em->flush();
 
@@ -73,7 +88,8 @@ class IndexController extends AbstractController
             'items' => $items,
             'balance' => $balance,
             'totalCost' => $totalCostOfServices,
-            'form' => $form->createView()
+            'subscriptionForm' => $subscriptionForm->createView(),
+            'unsubscriptionForm' => $unsubscriptionForm->createView()
         ]);
     }
 
