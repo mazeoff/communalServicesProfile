@@ -1,6 +1,5 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello IndexController!{% endblock %}
 
 {% block body %}
     <style>
@@ -14,8 +13,42 @@
         }
     </style>
     <div class="example-wrapper">
-        <h1>{{ title }}</h1>
-        <hr>
+        <div class="row">
+            <div class="col">
+                <h1 >{{ title }}</h1>
+            </div>
+            <div class="col col-lg-2 w-auto">
+                <!-- Кнопка-триггер модального окна -->
+                <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#topUpBalance">
+                    Пополнить баланс
+                </button>
+            </div>
+        </div>
+
+        <!-- Начало Модальное окно Пополнить баланс -->
+        <div class="modal fade" id="topUpBalance" tabindex="-1" aria-labelledby="topUpBalance" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+{#                    {{ form_start(subscriptionForm) }}#}
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="addServiceLabel">Пополнение баланса</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+                    </div>
+                    <div class="modal-body">
+{#                        {{ form_errors(subscriptionForm) }}#}
+{#                        {{ form_row(subscriptionForm.service) }}#}
+{#                        {{ form_row(subscriptionForm.quantity) }}#}
+                    </div>
+                    <div class="modal-footer">
+{#                        {{ form_row(subscriptionForm.submit) }}#}
+
+                    </div>
+{#                    {{ form_end(subscriptionForm) }}#}
+                </div>
+            </div>
+        </div>
+        <!--Конец Модальное окно Пополнить баланс -->
+
 
         {% set sum = 0 %}
         {% for item in items %}
@@ -33,6 +66,5 @@
 
         <hr>
         <h4>Итого: {{ sum }}</h4>
-{#        <a href="{{ path('shopOrder') }}" class="float-right btn btn-success mt-2">Оформить заказ</a>#}
     </div>
 {% endblock %}
