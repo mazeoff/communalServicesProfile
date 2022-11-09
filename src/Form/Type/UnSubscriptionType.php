@@ -2,10 +2,7 @@
 
 namespace App\Form\Type;
 
-use App\Entity\Service;
 use App\Entity\Transaction;
-use App\Repository\ServiceRepository;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -15,12 +12,6 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class UnSubscriptionType extends AbstractType
 {
-    private ServiceRepository $serviceRepository;
-
-    public function __construct(ServiceRepository $serviceRepository)
-    {
-        $this->serviceRepository = $serviceRepository;
-    }
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {

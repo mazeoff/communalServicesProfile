@@ -14,7 +14,7 @@ class Transaction
     private ?int $id = null;
 
     #[ORM\ManyToOne]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(nullable: true)]
     private ?Service $service = null;
 
 
@@ -23,7 +23,11 @@ class Transaction
 
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false)]
-    private ?balance $resultingBalance = null;
+    private ?Balance $resultingBalance = null;
+
+    #[ORM\ManyToOne]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?TransactionType $type = null;
 
     public function getId(): ?int
     {
@@ -63,6 +67,18 @@ class Transaction
     public function setResultingBalance(?balance $resultingBalance): self
     {
         $this->resultingBalance = $resultingBalance;
+
+        return $this;
+    }
+
+    public function getType(): ?TransactionType
+    {
+        return $this->type;
+    }
+
+    public function setType(?TransactionType $type): self
+    {
+        $this->type = $type;
 
         return $this;
     }
