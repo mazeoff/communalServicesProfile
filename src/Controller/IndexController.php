@@ -30,8 +30,7 @@ class IndexController extends AbstractController
     #[Route('/services', name: 'services')]
     public function services(Request           $request,
                              ServiceRepository $servicesRepository,
-                             BalanceRepository $balanceRepository,
-                             EntityManagerInterface $em): Response
+                             BalanceRepository $balanceRepository): Response
 
     {
 
@@ -67,7 +66,7 @@ class IndexController extends AbstractController
             $service->setSubscription(true);
             $service->setQuantity($subscriptionForm->get('quantity')->getData());
 
-            $em->flush();
+            $servicesRepository->save($service,true);
 
             return $this->redirectToRoute('services');
         }
@@ -78,7 +77,7 @@ class IndexController extends AbstractController
             $service->setSubscription(false);
             $service->setQuantity(null);
 
-            $em->flush();
+            $servicesRepository->save($service,true);
 
             return $this->redirectToRoute('services');
         }
@@ -104,14 +103,4 @@ class IndexController extends AbstractController
         ]);
     }
 
-    #[Route('/transactions', name: 'transactions')]
-    public function transactions(BalanceRepository $balanceRepository): Response
-    {
-        $balance = $balanceRepository->find(1)->getValue();
-        return $this->render('index/transactions.html.twig', [
-            'title' => 'Ваши транзакции',
-            'items' => '10',
-            'balance' => $balance
-        ]);
-    }
 }
