@@ -103,11 +103,8 @@ class TransactionController extends AbstractController
             return $this->redirectToRoute('transactions');
         }
 
-
         $transactions = $this->transactionRepository->findAll();
-        //$transactions = $this->transactionRepository->findOneByIdJoinedToType(1);
 
-        //$type =  $transactions->getType();
         //dd($transactions);
 
         return $this->render('index/transactions.html.twig', [

@@ -73,31 +73,31 @@ class IndexController extends AbstractController
         return $totalCostOfServices;
     }
 
-    public function getCostOfService(array $service): float
+    public function getCostOfService(Service $service): float
     {
-        $totalCostOfServices += $items[$i]->getPrice()*$items[$i]->getQuantity();//то считаем общую стоимость
-
-        $totalCostOfServices *= 30;
-        return $totalCostOfServices;
+        return $service->getPrice()*$service->getQuantity();
     }
 
-    public function addTransaction(Integer $typeOfTransactionId, float $costOfService)
+    public function addTransaction(int $serviceId, int $typeOfTransactionId, float $costOfService)
     {
         $transactionEntity = new Transaction();
 
-        //$transactionType = new TransactionType();
         $transactionTypeEntity = $this->transactionTypeRepository->find($typeOfTransactionId);
         $balanceEntity = $this->balanceRepository->find(1);
+
+        $serviceEntity = $this->serviceRepository->find($serviceId);
+
+        $transactionEntity->setService($serviceEntity);//serviceId
 
         $transactionEntity->setType($transactionTypeEntity);//type
 
         $currentBalance = $balanceEntity->getValue();
         $currentBalance -= $costOfService;
-        $balanceEntity->setValue($currentBalance);
+        $balanceEntity->setValue($currentBalance); //balance
 
         $transactionEntity->setResultingBalance($balanceEntity);//resulting balance
 
-        $transactionEntity->setSum($costOfService);
+        $transactionEntity->setSum($costOfService); //sum
 
         $this->transactionRepository->save($transactionEntity);
         $this->balanceRepository->save($balanceEntity, true);
@@ -107,13 +107,15 @@ class IndexController extends AbstractController
     public function subscribeToService(FormInterface $subscriptionForm )
     {
         $subscriptionDataForm = $subscriptionForm->getData();
-        $service = $this->serviceRepository->find($subscriptionDataForm->getService()->getId());
+        $serviceId = $subscriptionDataForm->getService()->getId();
+        $service = $this->serviceRepository->find($serviceId);
         $service->setSubscription(true);
         $service->setQuantity($subscriptionForm->get('quantity')->getData());
 
         $this->serviceRepository->save($service,true);
 
-        $subscriptionDataForm->getService()->get
+        $costOfService = $this->getCostOfService($service);
+        $this->addTransaction($serviceId,2,$costOfService);
 
     }
 
@@ -155,8 +157,6 @@ class IndexController extends AbstractController
 
         if ($subscriptionForm->isSubmitted() && $subscriptionForm->isValid()) {
             $this->subscribeToService($subscriptionForm);
-            $costOfService = $this->subscriptionForm->ge
-            $this->addTransaction(2,)
             return $this->redirectToRoute('services');
         }
 
