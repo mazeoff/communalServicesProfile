@@ -105,7 +105,10 @@ class TransactionController extends AbstractController
 
 
         $transactions = $this->transactionRepository->findAll();
-        dd($transactions);
+        //$transactions = $this->transactionRepository->findOneByIdJoinedToType(1);
+
+        //$type =  $transactions->getType();
+        //dd($transactions);
 
         return $this->render('index/transactions.html.twig', [
             'title' => 'Ваши транзакции',

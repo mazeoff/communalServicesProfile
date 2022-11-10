@@ -13,7 +13,7 @@ class Transaction
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\ManyToOne]
+    #[ORM\ManyToOne(fetch: 'EAGER')]
     #[ORM\JoinColumn(nullable: true)]
     private ?Service $service = null;
 
@@ -25,7 +25,7 @@ class Transaction
     #[ORM\JoinColumn(nullable: false)]
     private ?Balance $resultingBalance = null;
 
-    #[ORM\ManyToOne]
+    #[ORM\ManyToOne(fetch: 'EAGER')]
     #[ORM\JoinColumn(nullable: false)]
     private ?TransactionType $type = null;
 

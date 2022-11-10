@@ -3,7 +3,9 @@
 namespace App\Repository;
 
 use App\Entity\Transaction;
+use App\Entity\TransactionType;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\Mapping\ClassMetadataInfo;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -39,18 +41,21 @@ class TransactionRepository extends ServiceEntityRepository
         }
     }
 
-    public function findOneByIdJoinedToType(int $productId): ?Transaction
+    public function findOneByIdJoinedToType(int $typeId): array
     {
         $entityManager = $this->getEntityManager();
 
         $query = $entityManager->createQuery(
-            'SELECT p, c
-            FROM App\Entity\Product p
-            INNER JOIN p.category c
-            WHERE p.id = :id'
-        )->setParameter('id', $productId);
+            'SELECT type, tran
+                FROM App\Entity\Transaction tran 
+                INNER JOIN App\Entity\TransactionType type
+                WHERE type.id = :id'
+        )->setParameter('id', $typeId);
 
-        return $query->getOneOrNullResult();
+        //$query->setFetchMode(Transaction::class, 'transaction', ClassMetadataInfo::FETCH_EAGER);
+        dd($query->getResult());
+
+        return $query->getResult();
     }
 
 

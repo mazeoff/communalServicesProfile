@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\TransactionTypeRepository;
 use Doctrine\ORM\Mapping as ORM;
 
+
 #[ORM\Entity(repositoryClass: TransactionTypeRepository::class)]
 class TransactionType
 {
@@ -15,6 +16,10 @@ class TransactionType
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $type = null;
+
+    public function __toString() {
+        return $this->type;
+    }
 
     public function getId(): ?int
     {
