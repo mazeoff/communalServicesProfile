@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\TransactionRepository;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: TransactionRepository::class)]
@@ -23,11 +24,17 @@ class Transaction
 
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false)]
-    private ?Balance $resultingBalance = null;
+    private ?Balance $balance = null;
 
     #[ORM\ManyToOne(fetch: 'EAGER')]
     #[ORM\JoinColumn(nullable: false)]
     private ?TransactionType $type = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?float $resultBalance = null;
+
+    #[ORM\Column(type: Types::DATETIME_MUTABLE,nullable: true)]
+    private ?\DateTimeInterface $datetime = null;
 
     public function getId(): ?int
     {
@@ -59,14 +66,14 @@ class Transaction
         return $this;
     }
 
-    public function getResultingBalance(): ?balance
+    public function getBalanceId(): ?balance
     {
-        return $this->resultingBalance;
+        return $this->balance;
     }
 
-    public function setResultingBalance(?balance $resultingBalance): self
+    public function setBalanceId(?balance $balanceId): self
     {
-        $this->resultingBalance = $resultingBalance;
+        $this->balance = $balanceId;
 
         return $this;
     }
@@ -79,6 +86,30 @@ class Transaction
     public function setType(?TransactionType $type): self
     {
         $this->type = $type;
+
+        return $this;
+    }
+
+    public function getResultBalance(): ?float
+    {
+        return $this->resultBalance;
+    }
+
+    public function setResultBalance(?float $resultBalance): self
+    {
+        $this->resultBalance = $resultBalance;
+
+        return $this;
+    }
+
+    public function getDatetime(): ?\DateTimeInterface
+    {
+        return $this->datetime;
+    }
+
+    public function setDatetime(\DateTimeInterface $datetime): self
+    {
+        $this->datetime = $datetime;
 
         return $this;
     }

@@ -72,11 +72,16 @@ class TransactionController extends AbstractController
 
         $currentBalance = $balanceEntity->getValue();
         $currentBalance += $refill;
-        $balanceEntity->setValue($currentBalance);
+        $balanceEntity->setValue($currentBalance);//balance
+        $transactionEntity->
 
-        $transactionEntity->setResultingBalance($balanceEntity);//resulting balance
+        $transactionEntity->setResultBalance($currentBalance);//resultBalance
 
         $transactionEntity->setSum($refill);
+
+        $transactionEntity->setDatetime(new \DateTime());
+
+        dd($transactionEntity);
 
         $this->transactionRepository->save($transactionEntity);
         $this->balanceRepository->save($balanceEntity, true);
