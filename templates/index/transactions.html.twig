@@ -55,6 +55,14 @@
         {#                <div class="card-header"><h4>{{ transaction.type }}</h4></div>#}
                         <div class="card-body text-success">
                             <h5 class="card-title">{{ transaction.type }} +{{ transaction.sum }}₽</h5>
+                            <p class="card-text">
+                                Баланс: {{ transaction.resultBalance }}₽
+                                <br>
+                                Дата: {{ transaction.datetime|date('Y-m-d') }}
+                                <br>
+                                Время: {{ transaction.datetime|date('H:i') }}
+                                <br>
+                            </p>
         {#                    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>#}
                         </div>
                     </div>
@@ -64,9 +72,15 @@
                         <div class="card-body text-secondary">
                             <h5 class="card-title">{{ transaction.service.name }}</h5>
                             <p class="card-text">
-                                Количество: {{ transaction.service.quantity }}
+                                Количество: {{ transaction.quantity }}
                                 <br>
                                 {{ transaction.service.unit }}: {{ transaction.service.price }}₽
+                                <br>
+                                Баланс: {{ transaction.resultBalance }}₽
+                                <br>
+                                Дата: {{ transaction.datetime|date('Y-m-d') }}
+                                <br>
+                                Время: {{ transaction.datetime|date('H:i') }}
                                 <br>
                                 <h5>-{{ transaction.sum }}₽</h5>
                             </p>
@@ -74,14 +88,20 @@
                     </div>
 
                 {% elseif transaction.type.id == 3 %}
-                    <div class="card border-danger mb-3" style="max-width: 18rem;">
+                    <div class="card border-success mb-3" style="max-width: 18rem;">
                         <div class="card-header"><h5>{{ transaction.type }}</h5></div>
-                        <div class="card-body text-danger">
+                        <div class="card-body text-success">
                             <h5 class="card-title">{{ transaction.service.name }}</h5>
                             <p class="card-text">
-                                Количество: {{ transaction.service.quantity }}
+                                Количество: {{ transaction.quantity }}
                                 <br>
                                 {{ transaction.service.unit }}: {{ transaction.service.price }}₽
+                                <br>
+                                Баланс: {{ transaction.resultBalance }}₽
+                                <br>
+                                Дата: {{ transaction.datetime|date('Y-m-d') }}
+                                <br>
+                                Время: {{ transaction.datetime|date('H:i') }}
                                 <br>
                                 <h5>+{{ transaction.sum }}₽</h5>
                             </p>

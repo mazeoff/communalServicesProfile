@@ -41,6 +41,17 @@ class TransactionRepository extends ServiceEntityRepository
         }
     }
 
+    public function findAllOrderDESC(): array
+    {
+        $entityManager = $this->getEntityManager();
+
+        $query = $entityManager->createQuery(
+            'SELECT tran
+                FROM App\Entity\Transaction tran 
+                order by tran.datetime desc');
+        return $query->getResult();
+    }
+
     public function findLastTransaction(): ?Transaction
     {
         $entityManager = $this->getEntityManager();

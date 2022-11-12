@@ -32,6 +32,10 @@ class Transaction
     #[ORM\Column(type: Types::DATETIME_MUTABLE,nullable: true)]
     private ?\DateTimeInterface $datetime = null;
 
+    #[ORM\Column(nullable: true)]
+    private ?float $quantity = null;
+
+
     public function getId(): ?int
     {
         return $this->id;
@@ -98,4 +102,17 @@ class Transaction
 
         return $this;
     }
+
+    public function getQuantity(): ?float
+    {
+        return $this->quantity;
+    }
+
+    public function setQuantity(?float $quantity): self
+    {
+        $this->quantity = $quantity;
+
+        return $this;
+    }
+
 }
