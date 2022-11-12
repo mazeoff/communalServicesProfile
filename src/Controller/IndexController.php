@@ -7,7 +7,6 @@ use App\Entity\Transaction;
 use App\Form\Type\SubscriptionType;
 use App\Form\Type\UnSubscriptionType;
 use App\Repository\ServiceRepository;
-use App\Repository\BalanceRepository;
 use App\Repository\TransactionRepository;
 use App\Repository\TransactionTypeRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -23,16 +22,23 @@ use Symfony\Contracts\Service\Attribute\Required;
 class IndexController extends AbstractController
 {
 
-    private BalanceRepository $balanceRepository;
     private ServiceRepository $serviceRepository;
     private TransactionTypeRepository $transactionTypeRepository;
     private TransactionRepository $transactionRepository;
+    private float $currentBalance;
 
-    #[Required]
-    public function setBalanceRepository(BalanceRepository $balanceRepository): void
+    /**
+     * @param TransactionRepository $transactionRepository
+     */
+    public function __construct(TransactionRepository $transactionRepository)
     {
-        $this->balanceRepository = $balanceRepository;
+        if($transactionRepository->findLastTransaction() == null){
+            $this->currentBalance = 0;
+        }else{
+            $this->currentBalance = $transactionRepository->findLastTransaction()->getResultBalance();
+        }
     }
+
 
     #[Required]
     public function setServiceRepository(ServiceRepository $serviceRepository): void
@@ -73,17 +79,21 @@ class IndexController extends AbstractController
         return $totalCostOfServices;
     }
 
-    public function getCostOfService(Service $service): float
+    public function getNumbersOfDaysBeforeSettlementDate(): int
     {
-        return $service->getPrice()*$service->getQuantity();
+        return (int)date('t')-(int)date('j')+1;
     }
 
-    public function addTransaction(int $serviceId, int $typeOfTransactionId, float $costOfService)
+    public function getCostOfService(Service $service, int $quantity): float
+    {
+        return $service->getPrice()*$quantity*$this->getNumbersOfDaysBeforeSettlementDate();
+    }
+
+    public function addTransaction(float $currentBalance, int $serviceId, int $typeOfTransactionId, float $costOfService)
     {
         $transactionEntity = new Transaction();
 
         $transactionTypeEntity = $this->transactionTypeRepository->find($typeOfTransactionId);
-        $balanceEntity = $this->balanceRepository->find(1);
 
         $serviceEntity = $this->serviceRepository->find($serviceId);
 
@@ -91,32 +101,38 @@ class IndexController extends AbstractController
 
         $transactionEntity->setType($transactionTypeEntity);//type
 
-        $currentBalance = $balanceEntity->getValue();
         $currentBalance -= $costOfService;
-        $balanceEntity->setValue($currentBalance); //balance
 
-        $transactionEntity->setResultingBalance($balanceEntity);//resulting balance
+        $transactionEntity->setResultBalance($currentBalance);
 
         $transactionEntity->setSum($costOfService); //sum
 
-        $this->transactionRepository->save($transactionEntity);
-        $this->balanceRepository->save($balanceEntity, true);
+        $transactionEntity->setDatetime(new \DateTime());
+
+        $this->transactionRepository->save($transactionEntity, true);
 
     }
 
-    public function subscribeToService(FormInterface $subscriptionForm )
+    public function subscribeToService(FormInterface $subscriptionForm ): bool
     {
         $subscriptionDataForm = $subscriptionForm->getData();
         $serviceId = $subscriptionDataForm->getService()->getId();
         $service = $this->serviceRepository->find($serviceId);
-        $service->setSubscription(true);
-        $service->setQuantity($subscriptionForm->get('quantity')->getData());
 
-        $this->serviceRepository->save($service,true);
+        $quantity = $subscriptionForm->get('quantity')->getData();
+        $costOfService = $this->getCostOfService($service, $quantity);
 
-        $costOfService = $this->getCostOfService($service);
-        $this->addTransaction($serviceId,2,$costOfService);
+        if ($costOfService > $this->currentBalance){
+            return false;
+        }else{
+            $service->setSubscription(true);
+            $service->setQuantity($quantity);
 
+            $this->serviceRepository->save($service,true);
+
+            $this->addTransaction($this->currentBalance, $serviceId,2,$costOfService);
+            return true;
+        }
     }
 
     public function unSubscribeFromService(FormInterface $unsubscriptionForm )
@@ -135,9 +151,9 @@ class IndexController extends AbstractController
     #[Route('/services', name: 'services')]
     public function services(Request $request): Response
     {
+        //$currentBalance = $this->transactionRepository->findLastTransaction()->getResultBalance();
 
         $items = $this->serviceRepository->findAll();
-        $balance = $this->balanceRepository->find(1)->getValue();
 
         //считаем общую стоимость всех услуг за месяц
         $totalCostOfServices = $this->getTotalCostOfServices($items);
@@ -156,8 +172,11 @@ class IndexController extends AbstractController
 
 
         if ($subscriptionForm->isSubmitted() && $subscriptionForm->isValid()) {
-            $this->subscribeToService($subscriptionForm);
-            return $this->redirectToRoute('services');
+            if ($this->subscribeToService($subscriptionForm)){//success
+                return $this->redirectToRoute('services');
+            }else{
+                return $this->redirectToRoute('services');
+            }
         }
 
         if ($unsubscriptionForm->isSubmitted() && $unsubscriptionForm->isValid()) {
@@ -168,7 +187,7 @@ class IndexController extends AbstractController
         return $this->render('index/services.html.twig', [
             'title' => 'Мои услуги',
             'items' => $items,
-            'balance' => $balance,
+            'balance' => $this->currentBalance,
             'totalCost' => $totalCostOfServices,
             'subscriptionForm' => $subscriptionForm->createView(),
             'unsubscriptionForm' => $unsubscriptionForm->createView()

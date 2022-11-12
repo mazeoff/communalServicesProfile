@@ -41,6 +41,23 @@ class TransactionRepository extends ServiceEntityRepository
         }
     }
 
+    public function findLastTransaction(): ?Transaction
+    {
+        $entityManager = $this->getEntityManager();
+
+        $query = $entityManager->createQuery(
+            'SELECT tran
+                FROM App\Entity\Transaction tran 
+                order by tran.datetime desc');
+        //dd($query);
+        if ($query->getResult() == null){
+            return null;
+        }else{
+            $query->setMaxResults(1);
+            return $query->getSingleResult();
+        }
+    }
+
     public function findOneByIdJoinedToType(int $typeId): array
     {
         $entityManager = $this->getEntityManager();

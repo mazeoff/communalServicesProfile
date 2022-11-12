@@ -24,10 +24,6 @@ class Transaction
 
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false)]
-    private ?Balance $balance = null;
-
-    #[ORM\ManyToOne(fetch: 'EAGER')]
-    #[ORM\JoinColumn(nullable: false)]
     private ?TransactionType $type = null;
 
     #[ORM\Column(nullable: true)]
@@ -66,17 +62,6 @@ class Transaction
         return $this;
     }
 
-    public function getBalanceId(): ?balance
-    {
-        return $this->balance;
-    }
-
-    public function setBalanceId(?balance $balanceId): self
-    {
-        $this->balance = $balanceId;
-
-        return $this;
-    }
 
     public function getType(): ?TransactionType
     {

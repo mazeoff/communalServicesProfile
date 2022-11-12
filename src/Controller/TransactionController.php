@@ -15,6 +15,7 @@ use App\Repository\TransactionRepository;
 use App\Repository\TransactionTypeRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
+use JetBrains\PhpStorm\NoReturn;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -30,10 +31,25 @@ class TransactionController extends AbstractController
 //
 //    }
 
+
+
     private TransactionRepository $transactionRepository;
     private TransactionTypeRepository $transactionTypeRepository;
-    private BalanceRepository $balanceRepository;
     private ManagerRegistry $managerRegistry;
+
+    private float $currentBalance;
+
+    /**
+     * @param TransactionRepository $transactionRepository
+     */
+    public function __construct(TransactionRepository $transactionRepository)
+    {
+        if($transactionRepository->findLastTransaction() == null){
+            $this->currentBalance = 0;
+        }else{
+            $this->currentBalance = $transactionRepository->findLastTransaction()->getResultBalance();
+        }
+    }
 
 
     #[Required]
@@ -54,37 +70,23 @@ class TransactionController extends AbstractController
         $this->transactionTypeRepository = $transactionTypeRepository;
     }
 
-    #[Required]
-    public function setBalanceRepository(BalanceRepository $balanceRepository): void
-    {
-        $this->balanceRepository = $balanceRepository;
-    }
 
-    public function topUpBalance(float $refill )
+    public function topUpBalance(float $refill, Transaction $transactionEntity )
     {
-        $transactionEntity = new Transaction();
-
-        //$transactionType = new TransactionType();
         $transactionTypeEntity = $this->transactionTypeRepository->find(1);
-        $balanceEntity = $this->balanceRepository->find(1);
 
         $transactionEntity->setType($transactionTypeEntity);//type
 
-        $currentBalance = $balanceEntity->getValue();
-        $currentBalance += $refill;
-        $balanceEntity->setValue($currentBalance);//balance
-        $transactionEntity->
-
-        $transactionEntity->setResultBalance($currentBalance);//resultBalance
+        $this->currentBalance += $refill;
 
         $transactionEntity->setSum($refill);
 
+        $transactionEntity->setResultBalance($this->currentBalance);//resultBalance
+
         $transactionEntity->setDatetime(new \DateTime());
 
-        dd($transactionEntity);
-
-        $this->transactionRepository->save($transactionEntity);
-        $this->balanceRepository->save($balanceEntity, true);
+        //dd($transactionEntity);
+        $this->transactionRepository->save($transactionEntity,true);
 
     }
 
@@ -92,7 +94,6 @@ class TransactionController extends AbstractController
     #[Route('/transactions', name: 'transactions')]
     public function transactions(Request $request): Response
     {
-        $currentBalance = $this->balanceRepository->find(1)->getValue();
         //создание формы
         $topUpBalanceTransaction = new Transaction();
         $topUpBalanceForm = $this->createForm(TopUpBalanceType::class, $topUpBalanceTransaction);
@@ -103,7 +104,7 @@ class TransactionController extends AbstractController
         if ($topUpBalanceForm->isSubmitted() && $topUpBalanceForm->isValid()) {
 
             $refill = $topUpBalanceForm->get('value')->getData();
-            $this->topUpBalance($refill);
+            $this->topUpBalance($refill, $topUpBalanceTransaction);
 
             return $this->redirectToRoute('transactions');
         }
@@ -115,7 +116,7 @@ class TransactionController extends AbstractController
         return $this->render('index/transactions.html.twig', [
             'title' => 'Ваши транзакции',
             'transactions' => $transactions,
-            'balance' => $currentBalance,
+            'balance' => $this->currentBalance,
             'topUpBalanceForm' => $topUpBalanceForm->createView()
         ]);
     }
