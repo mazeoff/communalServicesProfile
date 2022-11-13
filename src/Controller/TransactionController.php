@@ -92,7 +92,6 @@ class TransactionController extends AbstractController
     #[Route('/transactions', name: 'transactions')]
     public function transactions(Request $request): Response
     {
-
         if (isset($_POST['settlementDay']))
         {
             $totalCostOfServices = $this->serviceRepository->getTotalCostOfServices();
@@ -118,6 +117,19 @@ class TransactionController extends AbstractController
             }
 
         }
+        $filterNew='checked';
+        $filterOld='';
+        $transactions = $this->transactionRepository->findAllOrderByDESC();
+        if (isset($_POST['filter']) && $_POST['filter'] == 'new'){
+            $transactions = $this->transactionRepository->findAllOrderByDESC();
+            $filterNew='checked';
+        }
+        if(isset($_POST['filter']) && $_POST['filter']== 'old'){
+            $transactions = $this->transactionRepository->findAllOrderByASC();
+            $filterOld='checked';
+        }
+
+
         //создание формы
         $topUpBalanceTransaction = new Transaction();
         $topUpBalanceForm = $this->createForm(TopUpBalanceType::class, $topUpBalanceTransaction);
@@ -133,7 +145,6 @@ class TransactionController extends AbstractController
             return $this->redirectToRoute('transactions');
         }
 
-        $transactions = $this->transactionRepository->findAllOrderByDESC();
 
         //dd($transactions);
 
@@ -141,7 +152,9 @@ class TransactionController extends AbstractController
             'title' => 'Ваши транзакции',
             'transactions' => $transactions,
             'balance' => $this->currentBalance,
-            'topUpBalanceForm' => $topUpBalanceForm->createView()
+            'topUpBalanceForm' => $topUpBalanceForm->createView(),
+            'filterNew'=>$filterNew,
+            'filterOld'=>$filterOld
         ]);
     }
 //    #[Route('/services', name: 'services')]
