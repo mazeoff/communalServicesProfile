@@ -150,7 +150,7 @@ class IndexController extends AbstractController
     #[Route('/services', name: 'services')]
     public function services(Request $request): Response
     {
-        $items = $this->serviceRepository->findAll();
+        $items = $this->serviceRepository->findAllSubscriptions();
 
         //считаем общую стоимость всех услуг за месяц
         $totalCostOfServices = $this->serviceRepository->getTotalCostOfServices();

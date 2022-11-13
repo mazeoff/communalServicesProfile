@@ -133,7 +133,7 @@ class TransactionController extends AbstractController
             return $this->redirectToRoute('transactions');
         }
 
-        $transactions = $this->transactionRepository->findAllOrderDESC();
+        $transactions = $this->transactionRepository->findAllOrderByDESC();
 
         //dd($transactions);
 

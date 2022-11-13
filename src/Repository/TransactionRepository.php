@@ -59,7 +59,7 @@ class TransactionRepository extends ServiceEntityRepository
         $this->save($transactionEntity,true);
     }
 
-    public function findAllOrderDESC(): array
+    public function findAllOrderByDESC(): array//first new
     {
         $entityManager = $this->getEntityManager();
 
@@ -67,6 +67,17 @@ class TransactionRepository extends ServiceEntityRepository
             'SELECT tran
                 FROM App\Entity\Transaction tran 
                 order by tran.datetime desc');
+        return $query->getResult();
+    }
+
+    public function findAllOrderByASC(): array//first old
+    {
+        $entityManager = $this->getEntityManager();
+
+        $query = $entityManager->createQuery(
+            'SELECT tran
+                FROM App\Entity\Transaction tran 
+                order by tran.datetime ASC');
         return $query->getResult();
     }
 

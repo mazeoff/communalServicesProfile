@@ -3,16 +3,12 @@
 
 {% block body %}
     <style>
-        .itemClass{
-            text-decoration: none;
-            color: #222222;
-        }
-        .itemClass:hover{
-            text-decoration: none;
-            color: #222222;
+        .content{
+            width: 50%;
         }
     </style>
-    <div class="example-wrapper">
+    <div class="container">
+        <!-- Строка с кнопками-->
         <div class="row">
             <div class="col">
                 <h1 >{{ title }}</h1>
@@ -31,7 +27,6 @@
                 </form>
             </div>
         </div>
-
         <!-- Начало Модальное окно Пополнить баланс -->
         <div class="modal fade" id="topUpBalance" tabindex="-1" aria-labelledby="topUpBalance" aria-hidden="true">
             <div class="modal-dialog">
@@ -54,67 +49,81 @@
             </div>
         </div>
         <!--Конец Модальное окно Пополнить баланс -->
+    </div>
+    <div class="container content">
+        <!--Строка с фильтрами -->
+        <div class="row">
+            <div class="btn-group btn-group-sm" role="group" aria-label="Vertical radio toggle button group">
+                <input type="radio" class="btn-check" name="vbtn-radio" id="vbtn-radio1" autocomplete="off" checked>
+                <label class="btn btn-outline-danger" for="vbtn-radio1">Radio 1</label>
+                <input type="radio" class="btn-check" name="vbtn-radio" id="vbtn-radio2" autocomplete="off">
+                <label class="btn btn-outline-danger" for="vbtn-radio2">Radio 2</label>
+                <input type="radio" class="btn-check" name="vbtn-radio" id="vbtn-radio3" autocomplete="off">
+                <label class="btn btn-outline-danger" for="vbtn-radio3">Radio 3</label>
+            </div>
+        </div>
 
-        <div class="column">
+        <div class="row row-cols-1 row-cols-md-2">
             {% for transaction in transactions %}
+                <div class="col mt-3">
                 {% if transaction.type.id == 1 %}
-                    <div class="card border-success mb-3" style="max-width: 18rem;">
-        {#                <div class="card-header"><h4>{{ transaction.type }}</h4></div>#}
-                        <div class="card-body text-success">
-                            <h5 class="card-title">{{ transaction.type }} +{{ transaction.sum }}₽</h5>
-                            <p class="card-text">
-                                Баланс: {{ transaction.resultBalance }}₽
-                                <br>
-                                Дата: {{ transaction.datetime|date('Y-m-d') }}
-                                <br>
-                                Время: {{ transaction.datetime|date('H:i') }}
-                                <br>
-                            </p>
-        {#                    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>#}
+                        <div class="card h-100 border-success " >
+                            <div class="card-header"><h5>{{ transaction.type }}</h5></div>
+                            <div class="card-body text-success">
+                                <h5 class="card-title">+{{ transaction.sum }}₽</h5>
+                                <p class="card-text">
+                                    Баланс: {{ transaction.resultBalance }}₽
+                                    <br>
+                                    Дата: {{ transaction.datetime|date('Y-m-d') }}
+                                    <br>
+                                    Время: {{ transaction.datetime|date('H:i') }}
+                                    <br>
+                                </p>
+            {#                    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>#}
+                            </div>
                         </div>
-                    </div>
-                {% elseif transaction.type.id == 2 %}
-                    <div class="card border-secondary mb-3" style="max-width: 18rem;">
-                        <div class="card-header"><h5>{{ transaction.type }}</h5></div>
-                        <div class="card-body text-secondary">
-                            <h5 class="card-title">{{ transaction.service.name }}</h5>
-                            <p class="card-text">
-                                Количество: {{ transaction.quantity }}
-                                <br>
-                                {{ transaction.service.unit }}: {{ transaction.service.price }}₽
-                                <br>
-                                Баланс: {{ transaction.resultBalance }}₽
-                                <br>
-                                Дата: {{ transaction.datetime|date('Y-m-d') }}
-                                <br>
-                                Время: {{ transaction.datetime|date('H:i') }}
-                                <br>
-                                <h5>-{{ transaction.sum }}₽</h5>
-                            </p>
+                    {% elseif transaction.type.id == 2 %}
+                        <div class="card h-100 border-secondary " >
+                            <div class="card-header"><h5>{{ transaction.type }}</h5></div>
+                            <div class="card-body text-secondary">
+                                <h5 class="card-title">{{ transaction.service.name }}</h5>
+                                <p class="card-text">
+                                    Количество: {{ transaction.quantity }}
+                                    <br>
+                                    {{ transaction.service.unit }}: {{ transaction.service.price }}₽
+                                    <br>
+                                    Баланс: {{ transaction.resultBalance }}₽
+                                    <br>
+                                    Дата: {{ transaction.datetime|date('Y-m-d') }}
+                                    <br>
+                                    Время: {{ transaction.datetime|date('H:i') }}
+                                    <br>
+                                    <h5>-{{ transaction.sum }}₽</h5>
+                                </p>
+                            </div>
                         </div>
-                    </div>
-
-                {% elseif transaction.type.id == 3 %}
-                    <div class="card border-success mb-3" style="max-width: 18rem;">
-                        <div class="card-header"><h5>{{ transaction.type }}</h5></div>
-                        <div class="card-body text-success">
-                            <h5 class="card-title">{{ transaction.service.name }}</h5>
-                            <p class="card-text">
-                                Количество: {{ transaction.quantity }}
-                                <br>
-                                {{ transaction.service.unit }}: {{ transaction.service.price }}₽
-                                <br>
-                                Баланс: {{ transaction.resultBalance }}₽
-                                <br>
-                                Дата: {{ transaction.datetime|date('Y-m-d') }}
-                                <br>
-                                Время: {{ transaction.datetime|date('H:i') }}
-                                <br>
-                                <h5>+{{ transaction.sum }}₽</h5>
-                            </p>
+                    {% elseif transaction.type.id == 3 %}
+                        <div class="card h-100 border-success ">
+                            <div class="card-header"><h5>{{ transaction.type }}</h5></div>
+                            <div class="card-body text-success">
+                                <h5 class="card-title">{{ transaction.service.name }}</h5>
+                                <p class="card-text">
+                                    Количество: {{ transaction.quantity }}
+                                    <br>
+                                    {{ transaction.service.unit }}: {{ transaction.service.price }}₽
+                                    <br>
+                                    Баланс: {{ transaction.resultBalance }}₽
+                                    <br>
+                                    Дата: {{ transaction.datetime|date('Y-m-d') }}
+                                    <br>
+                                    Время: {{ transaction.datetime|date('H:i') }}
+                                    <br>
+                                    <h5>+{{ transaction.sum }}₽</h5>
+                                </p>
+                            </div>
                         </div>
-                    </div>
                 {% endif %}
+                </div>
             {% endfor %}
         </div>
         <hr>
