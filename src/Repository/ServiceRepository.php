@@ -67,6 +67,16 @@ class ServiceRepository extends ServiceEntityRepository
             ;
     }
 
+    public function getTotalCostOfServices(): float
+    {
+        $items = $this->findAllSubscriptions();
+        $totalCostOfServices = 0;
+        for ($i = 0; $i < count($items);$i++){
+            $totalCostOfServices += $items[$i]->getPrice()*$items[$i]->getQuantity()*date('t');//то считаем общую стоимость
+        }
+        return $totalCostOfServices;
+    }
+
 //    /**
 //     * @return Service[] Returns an array of Service objects
 //     */

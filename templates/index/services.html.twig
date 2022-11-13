@@ -59,7 +59,7 @@
                             <h4>{{ item.name }}</h4>
                             <p class="card-text">{{ item.unit }}</p>
                             <div class="d-flex justify-content-between align-items-center">
-                                <h5>{{ item.price }} ₽</h5>
+                                <h5>{{ item.price }} ₽ / день</h5>
                             </div>
                             <button type="button" value="{{ item.id }}" class="btn btn-unsubscribe btn-danger" data-bs-toggle="modal" data-bs-target="#removeService">
                                 Отписаться
@@ -96,7 +96,7 @@
         <!--Конец Модальное окно Отписки -->
 
         <hr>
-        <h4>Итого: {{ totalCost }} ₽ / месяц</h4>
+        <h4>Итог: {{ totalCost }} ₽ / месяц</h4>
     </div>
 {% endblock %}
 {% block script %}

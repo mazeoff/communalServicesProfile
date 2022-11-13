@@ -34,6 +34,7 @@ class TransactionController extends AbstractController
 
 
     private TransactionRepository $transactionRepository;
+    private ServiceRepository $serviceRepository;
     private TransactionTypeRepository $transactionTypeRepository;
     private ManagerRegistry $managerRegistry;
 
@@ -65,6 +66,12 @@ class TransactionController extends AbstractController
     }
 
     #[Required]
+    public function setServiceRepository(ServiceRepository $serviceRepository): void
+    {
+        $this->serviceRepository = $serviceRepository;
+    }
+
+    #[Required]
     public function setTransactionTypeRepository(TransactionTypeRepository $transactionTypeRepository): void
     {
         $this->transactionTypeRepository = $transactionTypeRepository;
@@ -75,18 +82,9 @@ class TransactionController extends AbstractController
     {
         $transactionTypeEntity = $this->transactionTypeRepository->find(1);
 
-        $transactionEntity->setType($transactionTypeEntity);//type
-
         $this->currentBalance += $refill;
 
-        $transactionEntity->setSum($refill);
-
-        $transactionEntity->setResultBalance($this->currentBalance);//resultBalance
-
-        $transactionEntity->setDatetime(new \DateTime());
-
-        //dd($transactionEntity);
-        $this->transactionRepository->save($transactionEntity,true);
+        $this->transactionRepository->setData($transactionEntity, null,$transactionTypeEntity, $refill,$this->currentBalance, null);
 
     }
 
@@ -94,6 +92,32 @@ class TransactionController extends AbstractController
     #[Route('/transactions', name: 'transactions')]
     public function transactions(Request $request): Response
     {
+
+        if (isset($_POST['settlementDay']))
+        {
+            $totalCostOfServices = $this->serviceRepository->getTotalCostOfServices();
+            if ($totalCostOfServices > $this->currentBalance){
+                $response = new Response('Error');
+                return $response;
+            }else{
+                $transactionTypeEntity = $this->transactionTypeRepository->find(2);
+
+                $services = $this->serviceRepository->findAllSubscriptions();
+
+                foreach ($services as $service){
+                    $quantity = $service->getQuantity();
+                    $costOfService = $service->getPrice()*$quantity*date('t');
+                    $this->currentBalance -= $costOfService;
+                    $this->transactionRepository->setData(new Transaction(),
+                                                            $service,
+                                                            $transactionTypeEntity,
+                                                            $costOfService,
+                                                            $this->currentBalance,
+                                                            $quantity);
+                }
+            }
+
+        }
         //создание формы
         $topUpBalanceTransaction = new Transaction();
         $topUpBalanceForm = $this->createForm(TopUpBalanceType::class, $topUpBalanceTransaction);

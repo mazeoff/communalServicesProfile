@@ -66,19 +66,6 @@ class IndexController extends AbstractController
         ]);
     }
 
-    public function getTotalCostOfServices(array $items): float
-    {
-        $totalCostOfServices = 0;
-        for ($i = 0; $i < count($items);$i++){
-            if($items[$i]->isSubscription()){//если на услугу есть подписка
-                $totalCostOfServices += $items[$i]->getPrice()*$items[$i]->getQuantity();//то считаем общую стоимость
-            }
-
-        }
-        $totalCostOfServices *= 30;
-        return $totalCostOfServices;
-    }
-
     public function getNumbersOfDaysBeforeSettlementDate(): int
     {
         return (int)date('t')-(int)date('j')+1;
@@ -166,12 +153,11 @@ class IndexController extends AbstractController
         $items = $this->serviceRepository->findAll();
 
         //считаем общую стоимость всех услуг за месяц
-        $totalCostOfServices = $this->getTotalCostOfServices($items);
+        $totalCostOfServices = $this->serviceRepository->getTotalCostOfServices();
 
         // create object
         $subscriptionTransaction = new Transaction();
         $unsubscriptionTransaction = new Transaction();
-
 
         $subscriptionForm = $this->createForm(SubscriptionType::class, $subscriptionTransaction);
         $unsubscriptionForm = $this->createForm(UnSubscriptionType::class, $unsubscriptionTransaction);
@@ -202,17 +188,6 @@ class IndexController extends AbstractController
             'totalCost' => $totalCostOfServices,
             'subscriptionForm' => $subscriptionForm->createView(),
             'unsubscriptionForm' => $unsubscriptionForm->createView()
-        ]);
-    }
-
-
-    #[Route('/services/item/{id<\d+>}', name: 'servicesItem')]
-    public function servicesItem(int $id): Response
-    {
-        return $this->render('index/servicesItem.html.twig', [
-            'title' => 'SERVICES ITEM' . $id,
-            'description' => 'description',
-            'price' => '1000'
         ]);
     }
 

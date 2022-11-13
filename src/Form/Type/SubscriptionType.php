@@ -27,19 +27,19 @@ class SubscriptionType extends AbstractType
             ->add('service', EntityType::class,[
                 'class' => Service::class,
                 'choice_label' => function(Service $service) {
-                    return sprintf('%s (%s)', $service->getName(), $service->getUnit());
-//                    return $service->getName();
+                    return sprintf('%s (%s)', $service->getName(), $service->getUnit().': '.$service->getPrice()."₽ / день");
                 },
                 'choices' => $this->serviceRepository->findAllUnsubscribedServices(),
                 'label'   => 'Услуга'
             ])
-//            ->add('unit', EntityType::class,[
-//                'class' => Service::class,
-//                'choice_label' => function(Service $service) {
+//            ->add('unit', TextType::class,[
+//                'data'=>function(Service $service) {
+//                   // return sprintf('%s (%s)', $service->getName(), $service->getUnit());
 //                    return $service->getUnit();
 //                },
-//                'choices' => $this->serviceRepository->findAllUnsubscribedServices(),
-//                'label'   => 'Цена '
+//                'disabled' => true,
+//                'label'   => 'Цена ',
+//                'mapped' => false
 //            ])
             ->add('quantity', TextType::class,[
                 'label' => 'Количество',

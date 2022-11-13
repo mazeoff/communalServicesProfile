@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\Entity\Service;
 use App\Entity\Transaction;
 use App\Entity\TransactionType;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
@@ -39,6 +40,23 @@ class TransactionRepository extends ServiceEntityRepository
         if ($flush) {
             $this->getEntityManager()->flush();
         }
+    }
+
+    public function setData(Transaction $transactionEntity, ?Service $service,TransactionType $type, float $sum, float $resultBalance,?float $quantity): void
+    {
+        $transactionEntity->setService($service);
+
+        $transactionEntity->setType($type);
+
+        $transactionEntity->setSum($sum);
+
+        $transactionEntity->setResultBalance($resultBalance);
+
+        $transactionEntity->setDatetime(new \DateTime());
+
+        $transactionEntity->setQuantity($quantity);
+
+        $this->save($transactionEntity,true);
     }
 
     public function findAllOrderDESC(): array
