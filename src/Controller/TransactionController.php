@@ -9,6 +9,7 @@ use App\Entity\Transaction;
 use App\Entity\TransactionType;
 use App\Form\Type\SubscriptionType;
 use App\Form\Type\TopUpBalanceType;
+use App\Form\Type\TransactionFilterByServicesType;
 use App\Repository\BalanceRepository;
 use App\Repository\ServiceRepository;
 use App\Repository\TransactionRepository;
@@ -117,20 +118,28 @@ class TransactionController extends AbstractController
             }
 
         }
-        $filterNew='checked';
-        $filterOld='';
+
         $transactions = $this->transactionRepository->findAllOrderByDESC();
-        if (isset($_POST['filter']) && $_POST['filter'] == 'new'){
-            $transactions = $this->transactionRepository->findAllOrderByDESC();
-            $filterNew='checked';
-        }
-        if(isset($_POST['filter']) && $_POST['filter']== 'old'){
-            $transactions = $this->transactionRepository->findAllOrderByASC();
-            $filterOld='checked';
+
+
+        //создание формы Фильтра
+        $transactionFilterByServicesForm = $this->createForm(TransactionFilterByServicesType::class);
+
+        $transactionFilterByServicesForm->handleRequest($request);
+
+        if ($transactionFilterByServicesForm->isSubmitted())
+        {
+            $transactionFilterByServicesDataForm = $transactionFilterByServicesForm->getData();
+            $serviceId = $transactionFilterByServicesDataForm->getService()->getId();
+            if($transactionFilterByServicesForm->get('addition')->getData() == 'new')
+                $transactions = $this->transactionRepository->findAllWhereServiceIdDESC($serviceId);
+            if($transactionFilterByServicesForm->get('addition')->getData() == 'old')
+                $transactions = $this->transactionRepository->findAllWhereServiceIdASC($serviceId);
+
         }
 
 
-        //создание формы
+        //создание формы Пополнения баланса
         $topUpBalanceTransaction = new Transaction();
         $topUpBalanceForm = $this->createForm(TopUpBalanceType::class, $topUpBalanceTransaction);
 
@@ -153,31 +162,8 @@ class TransactionController extends AbstractController
             'transactions' => $transactions,
             'balance' => $this->currentBalance,
             'topUpBalanceForm' => $topUpBalanceForm->createView(),
-            'filterNew'=>$filterNew,
-            'filterOld'=>$filterOld
+            'transactionFilterByServicesForm' =>$transactionFilterByServicesForm->createView(),
         ]);
     }
-//    #[Route('/services', name: 'services')]
-//    public function new(Request $request): Response
-//    {
-//        // create object
-//        $transaction = new Transaction();
-//
-//        $form = $this->createForm(SubscriptionType::class, $transaction);
-//
-//        $form->handleRequest($request);
-//        if ($form->isSubmitted() && $form->isValid()) {
-//
-//            $transaction = $form->getData();
-//
-//            // ... perform some action, such as saving the task to the database
-//
-//            return $this->redirectToRoute('task_success');
-//        }
-//
-//        return $this->renderForm('index/services.html.twig', [
-//            'form' => $form,
-//        ]);
-//    }
 
 }

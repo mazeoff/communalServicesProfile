@@ -53,26 +53,13 @@
     <div class="container content mt-3">
         <!--Строка с фильтрами -->
         <div class="row">
-            <form action="/transactions" method="POST">
-                <div class="btn-group btn-group-sm" role="group" aria-label="Vertical radio toggle button group">
-                    <input type="radio" onchange='this.form.submit();' class="btn-check" name="filter" value="new" id="vbtn-radio-new" autocomplete="off"{{ filterNew }}>
-                    <label class="btn btn-outline-secondary" for="vbtn-radio-new">Сначала новые</label>
-                    <input type="radio" onchange='this.form.submit();' class="btn-check" name="filter" value="old" id="vbtn-radio-old" autocomplete="off"{{ filterOld }}>
-                    <label class="btn btn-outline-secondary" for="vbtn-radio-old">Сначала старые</label>
-                    <input type="radio" onchange='this.form.submit();' class="btn-check" name="filter-new" id="vbtn-radio3" autocomplete="off">
-                    <label class="btn btn-outline-secondary" for="vbtn-radio3">За период</label>
-
-                    <div class="btn-group btn-group-sm" role="group">
-                        <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                            По услуге
-                        </button>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="#">Dropdown link</a></li>
-                            <li><a class="dropdown-item" href="#">Dropdown link</a></li>
-                        </ul>
-                    </div>
-                </div>
-            </form>
+            {{ form_start(transactionFilterByServicesForm) }}
+            <div class="btn-group btn-group-sm" role="group" aria-label="Vertical radio toggle button group">
+                {{ form_row(transactionFilterByServicesForm.addition) }}
+                {{ form_row(transactionFilterByServicesForm.service) }}
+                {{ form_row(transactionFilterByServicesForm.submit) }}
+            </div>
+            {{ form_end(topUpBalanceForm) }}
         </div>
 
         <div class="row row-cols-1 row-cols-md-2">
@@ -91,7 +78,6 @@
                                     Время: {{ transaction.datetime|date('H:i') }}
                                     <br>
                                 </p>
-            {#                    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>#}
                             </div>
                         </div>
                     {% elseif transaction.type.id == 2 %}

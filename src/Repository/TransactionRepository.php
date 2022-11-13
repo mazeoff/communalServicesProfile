@@ -81,6 +81,32 @@ class TransactionRepository extends ServiceEntityRepository
         return $query->getResult();
     }
 
+    public function findAllWhereServiceIdDESC($serviceId): array
+    {
+        $entityManager = $this->getEntityManager();
+
+        $query = $entityManager->createQuery(
+            'SELECT tran
+                FROM App\Entity\Transaction tran 
+                WHERE tran.service = :id
+                order by tran.datetime desc'
+        )->setParameter('id', $serviceId);
+        return $query->getResult();
+    }
+
+    public function findAllWhereServiceIdASC($serviceId): array
+    {
+        $entityManager = $this->getEntityManager();
+
+        $query = $entityManager->createQuery(
+            'SELECT tran
+                FROM App\Entity\Transaction tran 
+                WHERE tran.service = :id
+                order by tran.datetime asc'
+        )->setParameter('id', $serviceId);
+        return $query->getResult();
+    }
+
     public function findLastTransaction(): ?Transaction
     {
         $entityManager = $this->getEntityManager();
