@@ -8,6 +8,7 @@ use App\Repository\ServiceRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -27,8 +28,8 @@ class TransactionFilterByServicesType extends AbstractType
         $builder
             ->add('addition', ChoiceType::class, [
                 'choices'  => [
-                    'Последние' => 'new',
-                    'Первые' => 'old'
+                    'Новые' => 'new',
+                    'Старые' => 'old'
                 ],
                 'mapped' => false,
                 'label'   => false
@@ -39,9 +40,18 @@ class TransactionFilterByServicesType extends AbstractType
                     return $service->getName();
                 },
                 'choices' => $this->serviceRepository->findAllSubscriptions(),
-                'placeholder' => 'По услуге',
+//                'placeholder' => 'По услуге',
+                'required'   => false,
+                'empty_data'=>'По услуге',
                 'label'   => false,
             ])
+            ->add('publishedAt', DateType::class, [
+                // renders it as a single text box
+//                'widget' => 'single_text',
+                'label'   => false,
+                'mapped' => false,
+                ])
+
             ->add('submit', SubmitType::class,[
                 'label'   => 'Обновить'
             ])

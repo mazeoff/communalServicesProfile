@@ -127,15 +127,20 @@ class TransactionController extends AbstractController
 
         $transactionFilterByServicesForm->handleRequest($request);
 
-        if ($transactionFilterByServicesForm->isSubmitted())
+        if ($transactionFilterByServicesForm->isSubmitted() && $transactionFilterByServicesForm->isValid())
         {
             $transactionFilterByServicesDataForm = $transactionFilterByServicesForm->getData();
-            $serviceId = $transactionFilterByServicesDataForm->getService()->getId();
-            if($transactionFilterByServicesForm->get('addition')->getData() == 'new')
-                $transactions = $this->transactionRepository->findAllWhereServiceIdDESC($serviceId);
-            if($transactionFilterByServicesForm->get('addition')->getData() == 'old')
-                $transactions = $this->transactionRepository->findAllWhereServiceIdASC($serviceId);
 
+            if ($transactionFilterByServicesDataForm->getService()->getId() != null){
+                $serviceId = $transactionFilterByServicesDataForm->getService()->getId();
+                if($transactionFilterByServicesForm->get('addition')->getData() == 'new')
+                    $transactions = $this->transactionRepository->findAllWhereServiceIdDESC($serviceId);
+                if($transactionFilterByServicesForm->get('addition')->getData() == 'old')
+                    $transactions = $this->transactionRepository->findAllWhereServiceIdASC($serviceId);
+            }
+            if($transactionFilterByServicesForm->get('addition')->getData() != null){
+
+            }
         }
 
 
