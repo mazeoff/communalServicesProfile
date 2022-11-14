@@ -31,6 +31,8 @@ class TransactionFilterByServicesType extends AbstractType
                     'Новые' => 'new',
                     'Старые' => 'old'
                 ],
+                'placeholder' => 'По добавлению',
+                'required'   => false,
                 'mapped' => false,
                 'label'   => false
             ])
@@ -42,13 +44,13 @@ class TransactionFilterByServicesType extends AbstractType
                 'choices' => $this->serviceRepository->findAllSubscriptions(),
                 'placeholder' => 'По услуге',
                 'required'   => false,
-                'empty_data'=>'По услуге',
                 'label'   => false,
             ])
             ->add('publishedAt', DateType::class, [
                 // renders it as a single text box
                 'widget' => 'single_text',
                 'label'   => false,
+                'required'   => false,
                 'mapped' => false,
                 ])
 

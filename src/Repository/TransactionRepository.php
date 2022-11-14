@@ -41,13 +41,21 @@ class TransactionRepository extends ServiceEntityRepository
             $this->getEntityManager()->flush();
         }
     }
-//////////////////////////NOT WORKING/////////////////////////////////////////////////
+
     public function findAllWithFilter(?int $serviceId,?string $addition, ?\DateTime $datetime ): array
     {
         $entityManager = $this->getEntityManager();
         $queryString = 'SELECT tran FROM App\Entity\Transaction tran';
         if(isset($serviceId)){
+
             $queryString .=' WHERE tran.service = '.$serviceId;
+            if(isset($datetime)){
+                $queryString .=' AND tran.datetime = '.$datetime->format('Y-m-d');
+            }
+        }else{
+            if(isset($datetime)){
+                $queryString .=' WHERE tran.datetime = '.$datetime->format('Y-m-d');
+            }
         }
         if(isset($addition)){
             if($addition == 'new')
@@ -55,15 +63,13 @@ class TransactionRepository extends ServiceEntityRepository
             else
                 $queryString .=' order by tran.datetime asc';
         }
-        if(isset($datetime)){
-            $queryString .=' WHERE tran.datetime = :date';
-        }
 
-        $query = $entityManager->createQuery($queryString)->setParameter('date', $datetime);
-        dd($query->getResult());
+        $query = $entityManager->createQuery($queryString);
+
+        //dd($query->getResult());
         return $query->getResult();
     }
-//////////////////////////NOT WORKING/////////////////////////////////////////////////
+
     public function setData(Transaction $transactionEntity, ?Service $service,TransactionType $type, float $sum, float $resultBalance,?float $quantity): void
     {
         $transactionEntity->setService($service);
