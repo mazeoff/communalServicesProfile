@@ -127,9 +127,12 @@ class TransactionController extends AbstractController
 
         $transactionFilterByServicesForm->handleRequest($request);
 
-        if ($transactionFilterByServicesForm->isSubmitted() && $transactionFilterByServicesForm->isValid())
+        if ($transactionFilterByServicesForm->isSubmitted())
         {
             $transactionFilterByServicesDataForm = $transactionFilterByServicesForm->getData();
+            //////////////////////////NOT WORKING/////////////////////////////////////////////////
+            $this->transactionRepository->findAllWithFilter(1,"new",$transactionFilterByServicesForm->get('publishedAt')->getData());
+            //////////////////////////NOT WORKING/////////////////////////////////////////////////
 
             if ($transactionFilterByServicesDataForm->getService()->getId() != null){
                 $serviceId = $transactionFilterByServicesDataForm->getService()->getId();
@@ -138,9 +141,7 @@ class TransactionController extends AbstractController
                 if($transactionFilterByServicesForm->get('addition')->getData() == 'old')
                     $transactions = $this->transactionRepository->findAllWhereServiceIdASC($serviceId);
             }
-            if($transactionFilterByServicesForm->get('addition')->getData() != null){
 
-            }
         }
 
 

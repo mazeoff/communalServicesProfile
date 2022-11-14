@@ -40,14 +40,14 @@ class TransactionFilterByServicesType extends AbstractType
                     return $service->getName();
                 },
                 'choices' => $this->serviceRepository->findAllSubscriptions(),
-//                'placeholder' => 'По услуге',
+                'placeholder' => 'По услуге',
                 'required'   => false,
                 'empty_data'=>'По услуге',
                 'label'   => false,
             ])
             ->add('publishedAt', DateType::class, [
                 // renders it as a single text box
-//                'widget' => 'single_text',
+                'widget' => 'single_text',
                 'label'   => false,
                 'mapped' => false,
                 ])
