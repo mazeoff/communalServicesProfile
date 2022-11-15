@@ -50,11 +50,11 @@ class TransactionRepository extends ServiceEntityRepository
 
             $queryString .=' WHERE tran.service = '.$serviceId;
             if(isset($datetime)){
-                $queryString .=' AND tran.datetime = '.$datetime->format('Y-m-d');
+                $queryString .=' AND tran.datetime LIKE \''.$datetime->format('Y-m-d').'%\'';
             }
         }else{
             if(isset($datetime)){
-                $queryString .=' WHERE tran.datetime = '.$datetime->format('Y-m-d');
+                $queryString .=' WHERE tran.datetime LIKE \''.$datetime->format('Y-m-d').'%\'';
             }
         }
         if(isset($addition)){
@@ -66,7 +66,6 @@ class TransactionRepository extends ServiceEntityRepository
 
         $query = $entityManager->createQuery($queryString);
 
-        //dd($query->getResult());
         return $query->getResult();
     }
 
@@ -152,49 +151,4 @@ class TransactionRepository extends ServiceEntityRepository
         }
     }
 
-    public function findOneByIdJoinedToType(int $typeId): array
-    {
-        $entityManager = $this->getEntityManager();
-
-        $query = $entityManager->createQuery(
-            'SELECT type, tran
-                FROM App\Entity\Transaction tran 
-                INNER JOIN App\Entity\TransactionType type
-                WHERE type.id = :id'
-        )->setParameter('id', $typeId);
-
-        //$query->setFetchMode(Transaction::class, 'transaction', ClassMetadataInfo::FETCH_EAGER);
-        dd($query->getResult());
-
-        return $query->getResult();
-    }
-
-
-
-
-
-//    /**
-//     * @return Transaction[] Returns an array of Transaction objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('t')
-//            ->andWhere('t.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('t.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
-
-//    public function findOneBySomeField($value): ?Transaction
-//    {
-//        return $this->createQueryBuilder('t')
-//            ->andWhere('t.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
 }
