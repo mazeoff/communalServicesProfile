@@ -68,7 +68,7 @@
                 <div class="col mt-3">
                 {% if transaction.type.id == 1 %}
                         <div class="card h-100 border-success " >
-                            <div class="card-header"><h5>{{ transaction.type }}</h5></div>
+                            <div class="card-header text-bg-success"><h5>{{ transaction.type }}</h5></div>
                             <div class="card-body text-success">
                                 <h5 class="card-title">+{{ transaction.sum }}₽</h5>
                                 <p class="card-text">
@@ -83,7 +83,7 @@
                         </div>
                     {% elseif transaction.type.id == 2 %}
                         <div class="card h-100 border-secondary " >
-                            <div class="card-header"><h5>{{ transaction.type }}</h5></div>
+                            <div class="card-header text-bg-secondary"><h5>{{ transaction.type }}</h5></div>
                             <div class="card-body text-secondary">
                                 <h5 class="card-title">{{ transaction.service.name }}</h5>
                                 <p class="card-text">
@@ -103,7 +103,7 @@
                         </div>
                     {% elseif transaction.type.id == 3 %}
                         <div class="card h-100 border-success ">
-                            <div class="card-header"><h5>{{ transaction.type }}</h5></div>
+                            <div class="card-header text-bg-success"><h5>{{ transaction.type }}</h5></div>
                             <div class="card-body text-success">
                                 <h5 class="card-title">{{ transaction.service.name }}</h5>
                                 <p class="card-text">

@@ -32,11 +32,7 @@ class IndexController extends AbstractController
      */
     public function __construct(TransactionRepository $transactionRepository)
     {
-        if($transactionRepository->findLastTransaction() == null){
-            $this->currentBalance = 0;
-        }else{
-            $this->currentBalance = $transactionRepository->findLastTransaction()->getResultBalance();
-        }
+        $this->currentBalance = $transactionRepository->getBalance();
     }
 
 

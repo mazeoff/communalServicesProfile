@@ -151,4 +151,19 @@ class TransactionRepository extends ServiceEntityRepository
         }
     }
 
+    public function getBalance(): float
+    {
+        $entityManager = $this->getEntityManager();
+        $qb = $entityManager->createQueryBuilder();
+        $query = $qb->select('tran.resultBalance')
+                    ->from(Transaction::class,'tran')
+                    ->orderBy('tran.id', 'DESC')
+                    ->setMaxResults(1)
+                    ->getQuery();
+
+        $result = $query->getSingleScalarResult();
+
+        return $result == null ? 0 : $result;
+    }
+
 }

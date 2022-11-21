@@ -10,13 +10,9 @@ use App\Entity\TransactionType;
 use App\Form\Type\SubscriptionType;
 use App\Form\Type\TopUpBalanceType;
 use App\Form\Type\TransactionFilterByServicesType;
-use App\Repository\BalanceRepository;
 use App\Repository\ServiceRepository;
 use App\Repository\TransactionRepository;
 use App\Repository\TransactionTypeRepository;
-use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\Persistence\ManagerRegistry;
-use JetBrains\PhpStorm\NoReturn;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -26,18 +22,11 @@ use Symfony\Contracts\Service\Attribute\Required;
 class TransactionController extends AbstractController
 {
 
-//    public function show(ManagerRegistry $doctrine, int $id): Response
-//    {
-//        $transactionEntity = $doctrine->getRepository(Service::class)->find($id);
-//
-//    }
-
 
 
     private TransactionRepository $transactionRepository;
     private ServiceRepository $serviceRepository;
     private TransactionTypeRepository $transactionTypeRepository;
-    private ManagerRegistry $managerRegistry;
 
     private float $currentBalance;
 
@@ -46,19 +35,9 @@ class TransactionController extends AbstractController
      */
     public function __construct(TransactionRepository $transactionRepository)
     {
-        if($transactionRepository->findLastTransaction() == null){
-            $this->currentBalance = 0;
-        }else{
-            $this->currentBalance = $transactionRepository->findLastTransaction()->getResultBalance();
-        }
+        $this->currentBalance = $transactionRepository->getBalance();
     }
 
-
-    #[Required]
-    public function setManagerRegistry(ManagerRegistry $managerRegistry): void
-    {
-        $this->managerRegistry = $managerRegistry;
-    }
 
     #[Required]
     public function setTransactionRepository(TransactionRepository $transactionRepository): void
@@ -93,12 +72,13 @@ class TransactionController extends AbstractController
     #[Route('/transactions', name: 'transactions')]
     public function transactions(Request $request): Response
     {
-        if (isset($_POST['settlementDay']))
+        if ($request->request->get('settlementDay') == '1')
         {
             $totalCostOfServices = $this->serviceRepository->getTotalCostOfServices();
             if ($totalCostOfServices > $this->currentBalance){
                 $response = new Response('Error');
-                return $response;
+                $response->headers->set('Content-Type', 'text/plain');
+                $response->send();
             }else{
                 $transactionTypeEntity = $this->transactionTypeRepository->find(2);
 
